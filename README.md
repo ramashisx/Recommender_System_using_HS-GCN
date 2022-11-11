@@ -2,7 +2,7 @@
 This is the project submission codes for semester project for GML-FA course IIT Kharagpur
 ### By Ramashish Gupta, Shakti Prasad Nanda and Shashank Sundi
 
-# colab link [https://colab.research.google.com/drive/1E01Zh7z9Jyr7RGL9wj2TwZQRnpbHGC1x?usp=sharing]
+# [colab link](https://colab.research.google.com/drive/1E01Zh7z9Jyr7RGL9wj2TwZQRnpbHGC1x?usp=sharing)
 
 HS-GCN: Hamming Spatial Graph Convolutional Networks for Recommendation.
 
