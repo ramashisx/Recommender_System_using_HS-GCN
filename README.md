@@ -14,3 +14,6 @@ HS-GCN: Hamming Spatial Graph Convolutional Networks for Recommendation.
 * Execution sequence
 
   The execution sequence of codes is as follows: preprocessing.py--->model_train.py--->model_test.py
+
+## Credits
+* Original Implementation [link](https://github.com/hanliu95/HS-GCN)

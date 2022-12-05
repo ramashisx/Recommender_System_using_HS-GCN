@@ -37,7 +37,7 @@ def IDCG(num):
 def descend_sort(array):
     return -np.sort(-array)
 
-
+''' This part is done partially by us '''
 for user_id, row in enumerate(tqdm(train_matrix)):
     can_item_ids = item_ids[~np.array(row, dtype=bool)]  # the id list of test items
     I = hash_codes[can_item_ids + user_num, :]

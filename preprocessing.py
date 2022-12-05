@@ -4,10 +4,9 @@ import pickle
 import scipy.sparse as sparse
 import gc
 
-######Loading Data........
+''' This part is done by us '''
 
 data = pd.read_csv('./raw_data/ratings.csv', encoding='utf-8').iloc[:, :3]
-# print(data)
 data.columns = ['user_id', 'item_id', 'ratings']
 print('data loaded...')
 
@@ -21,10 +20,9 @@ def get_count(tp, key):
 min_user = 1
 min_item = 1
 
-
+''' This part is done by author '''
 def filter_triplets(tp, min_uc=min_user, min_ic=min_item):
-    
-    # Items which are atleast rated once.
+    # Items which are at least rated once.
     _item_count = get_count(tp, 'item_id')
     tp = tp[tp['item_id'].isin(_item_count.index[_item_count >= min_ic])]
 
@@ -69,7 +67,7 @@ uid_name = df_gp.size().index
 def split_train_test(tp_rating):
     n_ratings = tp_rating.shape[0]
 
-    #70-30 train-test split 
+    # 70-30 train-test split
     test = np.random.choice(n_ratings, size=int(0.30 * n_ratings), replace=False)
 
     test_idx = np.zeros(n_ratings, dtype=bool)
@@ -106,11 +104,11 @@ test_matrix = sparse.coo_matrix((data, (row, col)), shape=(user_num, item_num), 
 print("Saving data...")
 para = {'user_num': user_num, 'item_num': item_num, 'edge_index': edge_index, 'train_matrix': train_matrix,
         'test_matrix': test_matrix, 'train_ui': train_ui}
-pickle.dump(para, open('./para/movie_load.para', 'wb')) #saved to movie_load.para
+pickle.dump(para, open('./para/movie_load.para', 'wb'))  # saved to movie_load.para
 print('data loading finished...\n\n\n')
 
 
-
+''' This part is done by us '''
 ######Forming Triplets......
 f_para = open('./para/movie_load.para', 'rb')
 para = pickle.load(f_para)
@@ -137,13 +135,13 @@ for lh, inter in enumerate(train_ui):
     train_triple = np.append(train_triple, triple, axis=0)
     if lh % 10000 == 9999:
         print('%d completed.....' % (lh + 1))
-    if lh % 3e4 == (3e4 - 1) and lh < len(train_ui)-1:
+    if lh % 3e4 == (3e4 - 1) and lh < len(train_ui) - 1:
         train_i = train_triple[:, 0]
         train_j = train_triple[:, 1] + user_num
         train_m = train_triple[:, 2] + user_num
         para = {'train_i': train_i, 'train_j': train_j, 'train_m': train_m}
 
-        #saving data to movie_triple
+        # saving data to movie_triple
         pickle.dump(para, open('./para/movie_triple_' + str(para_index) + '.para', 'wb'))
 
         train_triple = np.empty(shape=[0, 3], dtype=int)
@@ -155,6 +153,5 @@ train_i = train_triple[:, 0]
 train_j = train_triple[:, 1] + user_num
 train_m = train_triple[:, 2] + user_num
 para = {'train_i': train_i, 'train_j': train_j, 'train_m': train_m}
-pickle.dump(para, open('./para/movie_triple_'+str(para_index)+'.para', 'wb'))
+pickle.dump(para, open('./para/movie_triple_' + str(para_index) + '.para', 'wb'))
 print('data triplets finished...')
-

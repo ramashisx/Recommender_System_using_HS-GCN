@@ -6,8 +6,8 @@ from tqdm.auto import tqdm, trange
 import numpy as np
 from HSGCN_model import HSGCN
 from torch_geometric.data import Data
-import torch.utils.data as D
-import torch.nn.functional as F
+import torch.utils.data as d
+import torch.nn.functional as f
 
 f_para = open('./para/movie_load.para', 'rb')
 para_load = pickle.load(f_para)
@@ -51,7 +51,7 @@ class Net(torch.nn.Module):
             h = h_0
         h_1 = self.conv1(h_0, _edge_index)
         h_2 = self.conv2(h_1, _edge_index)
-        h_2 = F.dropout(h_2, p=0.1, training=self.training)
+        h_2 = f.dropout(h_2, p=0.1, training=self.training)
         return h, h_2
 
 
@@ -78,13 +78,15 @@ for b_i in list(range(data_block)):
     train_j = torch.cat((train_j, torch.tensor(triple_para['train_j'])))  # 1-D tensor of pos item node ID
     train_m = torch.cat((train_m, torch.tensor(triple_para['train_m'])))  # 1-D tensor of neg item node ID
 
-train_dataset = D.TensorDataset(train_i, train_j, train_m)
-train_loader = D.DataLoader(
+train_dataset = d.TensorDataset(train_i, train_j, train_m)
+train_loader = d.DataLoader(
     dataset=train_dataset,
     batch_size=batch_size,
     shuffle=True
 )
 
+
+''' This part is done partially by us '''
 model.train()
 for epoch in trange(epoch_max):
 
@@ -104,13 +106,13 @@ for epoch in trange(epoch_max):
         predict_im = torch.sum(torch.mul(embedding_i, embedding_m), dim=1)
         predict = torch.cat((predict_ij, predict_im))
         target = torch.cat((torch.ones_like(batch_j).float(), torch.zeros_like(batch_m).float())).to(device)
-        cross_loss = F.binary_cross_entropy_with_logits(predict, target)
+        cross_loss = f.binary_cross_entropy_with_logits(predict, target)
         p_ij = torch.sum(torch.mul(H_i, H_j), dim=1)
         p_im = torch.sum(torch.mul(H_i, H_m), dim=1)
         p_0 = torch.cat((p_ij, p_im))
-        rank_loss = torch.mean(F.relu(torch.sigmoid(predict_im) - torch.sigmoid(predict_ij) + alpha))
-        cross_loss_0 = F.binary_cross_entropy_with_logits(p_0, target)
-        rank_loss_0 = torch.mean(F.relu(torch.sigmoid(p_im) - torch.sigmoid(p_ij) + alpha))
+        rank_loss = torch.mean(f.relu(torch.sigmoid(predict_im) - torch.sigmoid(predict_ij) + alpha))
+        cross_loss_0 = f.binary_cross_entropy_with_logits(p_0, target)
+        rank_loss_0 = torch.mean(f.relu(torch.sigmoid(p_im) - torch.sigmoid(p_ij) + alpha))
         loss = cross_loss + lamb1 * rank_loss + lamb2 * rank_loss_0
         loss.backward()
         optimizer.step()
